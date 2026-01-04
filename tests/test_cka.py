@@ -1,0 +1,303 @@
+"""Tests for torchcka.cka module."""
+
+import warnings
+
+import pytest
+import torch
+import torch.nn as nn
+from torch.utils.data import DataLoader, TensorDataset
+
+from torchcka import CKA, CKAConfig
+
+
+class SimpleModel(nn.Module):
+    """Simple model for testing."""
+
+    def __init__(self):
+        super().__init__()
+        self.layer1 = nn.Linear(10, 20)
+        self.layer2 = nn.Linear(20, 10)
+        self.layer3 = nn.Linear(10, 5)
+
+    def forward(self, x):
+        x = torch.relu(self.layer1(x))
+        x = torch.relu(self.layer2(x))
+        return self.layer3(x)
+
+
+class TestCKAClass:
+    """Tests for CKA class."""
+
+    @pytest.fixture
+    def model(self):
+        """Create a simple model for testing."""
+        return SimpleModel()
+
+    @pytest.fixture
+    def dataloader(self):
+        """Create a simple dataloader for testing."""
+        data = torch.randn(32, 10)
+        dataset = TensorDataset(data)
+        return DataLoader(dataset, batch_size=8)
+
+    def test_context_manager_hook_cleanup(self, model, dataloader):
+        """Hooks should be properly cleaned up after context exit."""
+        layers = ["layer1", "layer2"]
+
+        # Count hooks before
+        hook_count_before = sum(len(m._forward_hooks) for m in model.modules())
+
+        with CKA(model, layers1=layers) as cka_analyzer:
+            _ = cka_analyzer.compare(dataloader, progress=False)
+
+        # Count hooks after
+        hook_count_after = sum(len(m._forward_hooks) for m in model.modules())
+
+        assert hook_count_after == hook_count_before
+
+    def test_training_state_restored(self, model, dataloader):
+        """Model training state should be restored after comparison."""
+        model.train()
+        assert model.training
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            assert not model.training  # Should be in eval mode
+            _ = cka_analyzer.compare(dataloader, progress=False)
+
+        assert model.training  # Should be restored to training mode
+
+    def test_training_state_restored_eval(self, model, dataloader):
+        """Model should stay in eval mode if it started in eval mode."""
+        model.eval()
+        assert not model.training
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            assert not model.training
+            _ = cka_analyzer.compare(dataloader, progress=False)
+
+        assert not model.training  # Should still be in eval mode
+
+    def test_same_model_comparison(self, model, dataloader):
+        """Comparing model with itself should work correctly."""
+        layers = ["layer1", "layer2"]
+
+        with CKA(model, layers1=layers) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        # Diagonal should be ~1 (same features compared to themselves)
+        diag = torch.diag(matrix)
+        assert torch.allclose(diag, torch.ones_like(diag), atol=0.01)
+
+    def test_output_shape(self, model, dataloader):
+        """CKA matrix should have correct shape."""
+        layers = ["layer1", "layer2", "layer3"]
+
+        with CKA(model, layers1=layers) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (3, 3)
+
+    def test_invalid_layers_warning(self, model):
+        """Should warn about invalid layer names."""
+        with warnings.catch_warnings(record=True) as w:
+            warnings.simplefilter("always")
+            CKA(model, layers1=["nonexistent", "layer1"])
+
+            assert len(w) >= 1
+            assert any("not found" in str(warning.message).lower() for warning in w)
+
+    def test_no_valid_layers_error(self, model):
+        """Should raise error when no valid layers found."""
+        with pytest.raises(ValueError, match="No valid layers"):
+            CKA(model, layers1=["nonexistent1", "nonexistent2"])
+
+    def test_callable_api(self, model, dataloader):
+        """CKA should be callable for automatic hook management."""
+        cka_analyzer = CKA(model, layers1=["layer1", "layer2"])
+        matrix = cka_analyzer(dataloader, progress=False)
+
+        assert matrix.shape == (2, 2)
+
+    def test_checkpoint_save_load(self, model, dataloader, tmp_path):
+        """Should save and load checkpoints correctly."""
+        checkpoint_path = tmp_path / "checkpoint.pt"
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+            cka_analyzer.save_checkpoint(checkpoint_path, matrix, metadata={"test": "value"})
+
+        # Load checkpoint
+        checkpoint = CKA.load_checkpoint(checkpoint_path)
+
+        assert "cka_matrix" in checkpoint
+        assert "model1_info" in checkpoint
+        assert "config" in checkpoint
+        assert "metadata" in checkpoint
+        assert checkpoint["metadata"]["test"] == "value"
+        assert torch.allclose(checkpoint["cka_matrix"], matrix.cpu())
+
+    def test_two_different_models(self, dataloader):
+        """Should compare two different models."""
+        model1 = SimpleModel()
+        model2 = SimpleModel()
+
+        with CKA(model1, model2, layers1=["layer1"], layers2=["layer1"]) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (1, 1)
+        # Random initialized models should have some similarity
+        assert 0 <= matrix[0, 0] <= 1
+
+    def test_different_layer_counts(self, dataloader):
+        """Should handle different layer counts for two models."""
+        model1 = SimpleModel()
+        model2 = SimpleModel()
+
+        with CKA(
+            model1, model2, layers1=["layer1", "layer2"], layers2=["layer1"]
+        ) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (2, 1)
+
+    def test_callback_called(self, model, dataloader):
+        """Callback should be called for each batch."""
+        call_count = [0]
+
+        def callback(batch_idx, total_batches, current_matrix):
+            call_count[0] += 1
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            cka_analyzer.compare(dataloader, progress=False, callback=callback)
+
+        # Should be called once per batch
+        assert call_count[0] == len(dataloader)
+
+
+class TestCKANumericalStability:
+    """Tests for numerical stability."""
+
+    def test_epsilon_prevents_nan(self):
+        """Epsilon should prevent NaN from zero denominators."""
+        model = SimpleModel()
+        # Create data with very small values
+        data = torch.randn(32, 10) * 1e-10
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        config = CKAConfig(epsilon=1e-10)
+
+        with CKA(model, layers1=["layer1"], config=config) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert not torch.isnan(matrix).any()
+        assert not torch.isinf(matrix).any()
+
+    def test_float64_precision(self):
+        """float64 should provide better precision."""
+        model = SimpleModel()
+        data = torch.randn(32, 10)
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        config = CKAConfig(dtype=torch.float64)
+
+        with CKA(model, layers1=["layer1"], config=config) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.dtype == torch.float64
+
+
+class TestCKABatchExtraction:
+    """Tests for batch input extraction."""
+
+    def test_tensor_batch(self):
+        """Should handle plain tensor batches."""
+        model = SimpleModel()
+        data = torch.randn(16, 10)
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (1, 1)
+
+    def test_tuple_batch(self):
+        """Should handle tuple batches (input, label)."""
+        model = SimpleModel()
+        data = torch.randn(16, 10)
+        labels = torch.randint(0, 5, (16,))
+        dataset = TensorDataset(data, labels)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        with CKA(model, layers1=["layer1"]) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (1, 1)
+
+    def test_hooks_not_registered_error(self):
+        """Should raise error if hooks not registered."""
+        model = SimpleModel()
+        data = torch.randn(16, 10)
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        cka_analyzer = CKA(model, layers1=["layer1"])
+
+        with pytest.raises(RuntimeError, match="Hooks not registered"):
+            cka_analyzer.compare(dataloader)
+
+
+class TestCKAConfig:
+    """Tests for CKAConfig interaction."""
+
+    def test_rbf_kernel_config(self):
+        """Should use RBF kernel when configured."""
+        model = SimpleModel()
+        data = torch.randn(32, 10)
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        config = CKAConfig(kernel="rbf")
+
+        with CKA(model, layers1=["layer1"], config=config) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (1, 1)
+        assert 0 <= matrix[0, 0] <= 1
+
+    def test_biased_hsic_config(self):
+        """Should use biased HSIC when configured."""
+        model = SimpleModel()
+        data = torch.randn(32, 10)
+        dataset = TensorDataset(data)
+        dataloader = DataLoader(dataset, batch_size=8)
+
+        config = CKAConfig(unbiased=False)
+
+        with CKA(model, layers1=["layer1"], config=config) as cka_analyzer:
+            matrix = cka_analyzer.compare(dataloader, progress=False)
+
+        assert matrix.shape == (1, 1)
+
+
+class TestModelInfo:
+    """Tests for ModelInfo dataclass."""
+
+    def test_model_info_created(self):
+        """ModelInfo should be created with correct values."""
+        model = SimpleModel()
+
+        cka_analyzer = CKA(model, layers1=["layer1"], model1_name="TestModel")
+
+        assert cka_analyzer.model1_info.name == "TestModel"
+        assert cka_analyzer.model1_info.layers == ["layer1"]
+
+    def test_model_info_auto_name(self):
+        """ModelInfo should use class name when name not provided."""
+        model = SimpleModel()
+
+        cka_analyzer = CKA(model, layers1=["layer1"])
+
+        assert cka_analyzer.model1_info.name == "SimpleModel"
