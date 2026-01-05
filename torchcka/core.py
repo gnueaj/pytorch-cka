@@ -30,7 +30,12 @@ def linear_kernel(x: torch.Tensor) -> torch.Tensor:
 
     Returns:
         Gram matrix of shape (n, n).
+
+    Raises:
+        ValueError: If x is not a 2D tensor.
     """
+    if x.dim() != 2:
+        raise ValueError(f"linear_kernel requires 2D tensor, got shape {x.shape}")
     return torch.mm(x, x.T)
 
 
@@ -49,10 +54,16 @@ def rbf_kernel(
     Returns:
         Gram matrix of shape (n, n).
 
+    Raises:
+        ValueError: If x is not a 2D tensor.
+
     Note:
         Median heuristic: sigma^2 = median(pairwise_squared_distances) / 2
         This is a standard choice from Gretton et al.
     """
+    if x.dim() != 2:
+        raise ValueError(f"rbf_kernel requires 2D tensor, got shape {x.shape}")
+
     # Compute squared pairwise distances efficiently
     # ||x_i - x_j||^2 = ||x_i||^2 + ||x_j||^2 - 2 * x_i^T * x_j
     dot_products = torch.mm(x, x.T)
@@ -129,8 +140,27 @@ def center_gram_matrix(gram: torch.Tensor) -> torch.Tensor:
 
     Returns:
         Centered gram matrix of shape (n, n).
+
+    Raises:
+        ValueError: If gram is not a 2D square tensor with n >= 1.
     """
-    n = gram.shape[0]
+    # Validate dimensions
+    if gram.dim() != 2:
+        raise ValueError(
+            f"center_gram_matrix requires 2D tensor, got shape {gram.shape}"
+        )
+
+    # Validate square matrices
+    n, m = gram.shape
+    if n != m:
+        raise ValueError(
+            f"center_gram_matrix requires square matrix, got shape {gram.shape}"
+        )
+
+    # Validate sample size
+    if n < 1:
+        raise ValueError(f"center_gram_matrix requires non-empty matrix, got n={n}")
+
     # Efficient centering without explicit matrix construction
     # H @ K @ H = K - (1/n) * K @ 1 @ 1^T - (1/n) * 1 @ 1^T @ K + (1/n^2) * 1 @ 1^T @ K @ 1 @ 1^T
     # Simplified: K_c[i,j] = K[i,j] - mean(K[i,:]) - mean(K[:,j]) + mean(K)
@@ -161,11 +191,30 @@ def hsic_biased(
         HSIC value as scalar tensor.
 
     Raises:
-        ValueError: If n <= 1.
+        ValueError: If inputs are not 2D square tensors with matching shapes and n > 1.
     """
-    n = gram_x.shape[0]
+    # Validate dimensions
+    if gram_x.dim() != 2 or gram_y.dim() != 2:
+        raise ValueError(
+            f"hsic_biased requires 2D tensors, got shapes {gram_x.shape} and {gram_y.shape}"
+        )
+
+    # Validate shapes match
+    if gram_x.shape != gram_y.shape:
+        raise ValueError(
+            f"hsic_biased requires matching shapes, got {gram_x.shape} and {gram_y.shape}"
+        )
+
+    # Validate square matrices
+    n, m = gram_x.shape
+    if n != m:
+        raise ValueError(
+            f"hsic_biased requires square matrices, got shape {gram_x.shape}"
+        )
+
+    # Validate sample size
     if n <= 1:
-        raise ValueError(f"HSIC requires n > 1, got n={n}")
+        raise ValueError(f"hsic_biased requires n > 1, got n={n}")
 
     # Center the gram matrices
     centered_x = center_gram_matrix(gram_x)
@@ -199,11 +248,30 @@ def hsic_unbiased(
         Unbiased HSIC value as scalar tensor.
 
     Raises:
-        ValueError: If n <= 3 (unbiased estimator requires n > 3).
+        ValueError: If inputs are not 2D square tensors with matching shapes and n > 3.
     """
-    n = gram_x.shape[0]
+    # Validate dimensions
+    if gram_x.dim() != 2 or gram_y.dim() != 2:
+        raise ValueError(
+            f"hsic_unbiased requires 2D tensors, got shapes {gram_x.shape} and {gram_y.shape}"
+        )
+
+    # Validate shapes match
+    if gram_x.shape != gram_y.shape:
+        raise ValueError(
+            f"hsic_unbiased requires matching shapes, got {gram_x.shape} and {gram_y.shape}"
+        )
+
+    # Validate square matrices
+    n, m = gram_x.shape
+    if n != m:
+        raise ValueError(
+            f"hsic_unbiased requires square matrices, got shape {gram_x.shape}"
+        )
+
+    # Validate sample size
     if n <= 3:
-        raise ValueError(f"Unbiased HSIC requires n > 3, got n={n}")
+        raise ValueError(f"hsic_unbiased requires n > 3, got n={n}")
 
     # Clone to avoid modifying input, then zero diagonals
     K = gram_x.clone()
