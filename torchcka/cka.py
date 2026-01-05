@@ -388,16 +388,34 @@ class CKA:
             hsic_xx: Accumulator for HSIC(K, K), shape (n_layers1,).
             hsic_yy: Accumulator for HSIC(L, L), shape (n_layers2,).
         """
-        # Pre-compute gram matrices for model2 layers (optimization: avoid recomputing)
+        # Pre-compute all gram matrices and self-HSIC values to avoid redundant computation
+        gram1_cache: Dict[str, torch.Tensor] = {}
         gram2_cache: Dict[str, torch.Tensor] = {}
-        hsic_yy_batch: Dict[str, torch.Tensor] = {}
 
+        # Cache gram matrices and HSIC(K, K) for model1
+        for i, layer1 in enumerate(self.layers1):
+            feat1 = self._features1.get(layer1)
+            if feat1 is None:
+                continue
+
+            if feat1.dim() > 2:
+                feat1 = feat1.flatten(1)
+            feat1 = feat1.to(dtype=self.config.dtype)
+
+            gram1 = compute_gram_matrix(
+                feat1, self.config.kernel, self.config.sigma, self.config.epsilon
+            )
+            gram1_cache[layer1] = gram1
+
+            hsic_kk = hsic(gram1, gram1, self.config.unbiased, self.config.epsilon)
+            hsic_xx[i] += hsic_kk
+
+        # Cache gram matrices and HSIC(L, L) for model2
         for j, layer2 in enumerate(self.layers2):
             feat2 = self._features2.get(layer2)
             if feat2 is None:
                 continue
 
-            # Flatten if needed
             if feat2.dim() > 2:
                 feat2 = feat2.flatten(1)
             feat2 = feat2.to(dtype=self.config.dtype)
@@ -407,36 +425,20 @@ class CKA:
             )
             gram2_cache[layer2] = gram2
 
-            # Compute HSIC(L, L)
             hsic_ll = hsic(gram2, gram2, self.config.unbiased, self.config.epsilon)
-            hsic_yy_batch[layer2] = hsic_ll
             hsic_yy[j] += hsic_ll
 
-        # Compute HSIC values for each layer pair
+        # Compute cross-HSIC for all layer pairs
         for i, layer1 in enumerate(self.layers1):
-            feat1 = self._features1.get(layer1)
-            if feat1 is None:
+            gram1 = gram1_cache.get(layer1)
+            if gram1 is None:
                 continue
-
-            # Flatten if needed
-            if feat1.dim() > 2:
-                feat1 = feat1.flatten(1)
-            feat1 = feat1.to(dtype=self.config.dtype)
-
-            gram1 = compute_gram_matrix(
-                feat1, self.config.kernel, self.config.sigma, self.config.epsilon
-            )
-
-            # Compute HSIC(K, K)
-            hsic_kk = hsic(gram1, gram1, self.config.unbiased, self.config.epsilon)
-            hsic_xx[i] += hsic_kk
 
             for j, layer2 in enumerate(self.layers2):
                 gram2 = gram2_cache.get(layer2)
                 if gram2 is None:
                     continue
 
-                # Compute HSIC(K, L)
                 hsic_kl = hsic(gram1, gram2, self.config.unbiased, self.config.epsilon)
                 hsic_xy[i, j] += hsic_kl
 
@@ -458,9 +460,8 @@ class CKA:
         """
         # CKA[i,j] = HSIC_xy[i,j] / sqrt(HSIC_xx[i] * HSIC_yy[j])
         # Use broadcasting: (n1, n2) / sqrt((n1, 1) * (1, n2))
-        denominator = (
-            torch.sqrt(hsic_xx.unsqueeze(1) * hsic_yy.unsqueeze(0)) + self.config.epsilon
-        )
+        # Clamp to non-negative to handle potential negative unbiased HSIC values
+        denominator = torch.sqrt(torch.clamp(hsic_xx.unsqueeze(1) * hsic_yy.unsqueeze(0), min=0.0)) + self.config.epsilon
         return hsic_xy / denominator
 
     # =========================================================================
