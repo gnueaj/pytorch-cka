@@ -19,7 +19,6 @@ __version__ = "0.1.0"
 
 from .cka import CKA
 from .core import (
-    EPSILON,
     compute_gram_matrix,
     hsic,
 )
@@ -42,7 +41,6 @@ __all__ = [
     # Main class
     "CKA",
     # Core functions
-    "EPSILON",
     "compute_gram_matrix",
     "hsic",
     # Utilities

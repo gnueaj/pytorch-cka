@@ -13,7 +13,7 @@ from torch.types import Device
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 
-from .core import EPSILON, compute_gram_matrix, hsic
+from .core import compute_gram_matrix, hsic
 from .utils import (
     FeatureCache,
     get_device,
@@ -532,7 +532,8 @@ class CKA:
         """
         # CKA[i,j] = HSIC_xy[i,j] / sqrt(HSIC_xx[i] * HSIC_yy[j])
         # Clamp to non-negative to handle potential negative unbiased HSIC values
-        denominator = torch.sqrt(torch.clamp(hsic_xx.unsqueeze(1) * hsic_yy.unsqueeze(0), min=0.0)) + EPSILON
+        denominator = torch.sqrt(torch.clamp(hsic_xx.unsqueeze(1) * hsic_yy.unsqueeze(0), min=0.0))
+        denominator = torch.where(denominator == 0, 1e-6, denominator)
         return hsic_xy / denominator
 
 

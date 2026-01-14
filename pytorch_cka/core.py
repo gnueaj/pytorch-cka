@@ -11,10 +11,6 @@ References:
 
 import torch
 
-# Numerical stability constant for CKA computations
-EPSILON = 1e-6
-
-
 def compute_gram_matrix(x: torch.Tensor) -> torch.Tensor:
     """Compute Gram matrix using linear kernel: K = X @ X^T.
 
@@ -35,7 +31,6 @@ def compute_gram_matrix(x: torch.Tensor) -> torch.Tensor:
 def hsic(
     gram_x: torch.Tensor,
     gram_y: torch.Tensor,
-    epsilon: float = EPSILON,
 ) -> torch.Tensor:
     """Compute unbiased HSIC estimator (Song et al. 2012, Nguyen et al. 2020).
 
@@ -48,7 +43,6 @@ def hsic(
     Args:
         gram_x: Gram matrix K of shape (n, n).
         gram_y: Gram matrix L of shape (n, n).
-        epsilon: Numerical stability constant.
 
     Returns:
         HSIC value as scalar tensor.
@@ -93,5 +87,5 @@ def hsic(
 
     main_term = trace_KL + term2 - term3
 
-    denominator = n * (n - 3) + epsilon
+    denominator = n * (n - 3)
     return main_term / denominator
