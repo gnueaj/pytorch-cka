@@ -63,3 +63,4 @@ cka_checkpoint.pt
 .mypy_cache/
 
 uv.lock
+tests/
