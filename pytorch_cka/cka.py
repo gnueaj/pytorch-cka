@@ -49,10 +49,10 @@ class CKA:
         Args:
             model1: First model to compare.
             model2: Second model to compare.
-            model1_layers: Layers to hook in model1. If None, uses all layers.
-            model2_layers: Layers to hook in model2. If None, uses all layers.
             model1_name: Display name for model1.
             model2_name: Display name for model2.
+            model1_layers: Layers to hook in model1. If None, uses all layers.
+            model2_layers: Layers to hook in model2. If None, uses all layers.
             device: Device for computation. If None, auto-detects from model.
 
         Raises:
@@ -64,7 +64,6 @@ class CKA:
 
         self.device = torch.device(device) if device else get_device(self.model1)
 
-        # Get all layers if not specified
         if not model1_layers:
             model1_layers = [name for name, _ in self.model1.named_modules() if name]
             if len(model1_layers) > 150:
@@ -87,12 +86,8 @@ class CKA:
         self.model2_name = model2_name or self.model2.__class__.__name__
 
         self._is_same_model = self.model1 is self.model2
-        self._is_same_layers = (
-            self._is_same_model and self.model1_layers == self.model2_layers
-        )
 
         self._features1 = FeatureCache(detach=True)
-        # _features1 stores features for the union of model1_layers and model2_layers when _is_same_model is True
         self._features2 = self._features1 if self._is_same_model else FeatureCache(detach=True)
 
         self._hook_handles: List[torch.utils.hooks.RemovableHandle] = []
@@ -400,7 +395,7 @@ class CKA:
             hsic_xx: Accumulator for HSIC(K, K), shape (n_layers1,).
             hsic_yy: Accumulator for HSIC(L, L), shape (n_layers2,).
         """
-        if self._is_same_layers:
+        if self._is_same_model and self.model1_layers == self.model2_layers:
             self._accumulate_hsic_symmetric(hsic_xy, hsic_xx, hsic_yy)
             return
 
