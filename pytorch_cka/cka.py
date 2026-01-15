@@ -5,7 +5,7 @@ between layers of PyTorch models with proper hook management and memory safety.
 """
 
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Sequence, Tuple
 
 import torch
 import torch.nn as nn
@@ -38,10 +38,10 @@ class CKA:
         self,
         model1: nn.Module,
         model2: nn.Module,
-        model1_name: Optional[str] = None,
-        model2_name: Optional[str] = None,
-        model1_layers: Optional[List[str]] = None,
-        model2_layers: Optional[List[str]] = None,
+        model1_name: str | None = None,
+        model2_name: str | None = None,
+        model1_layers: Sequence[str | int] | None = None,
+        model2_layers: Sequence[str | int] | None = None,
         device: Device = None,
     ) -> None:
         """Initialize CKA analyzer.
@@ -92,8 +92,8 @@ class CKA:
 
         self._hook_handles: List[torch.utils.hooks.RemovableHandle] = []
 
-        self._model1_training: Optional[bool] = None
-        self._model2_training: Optional[bool] = None
+        self._model1_training: bool | None = None
+        self._model2_training: bool | None = None
 
 
     # =========================================================================
@@ -110,9 +110,9 @@ class CKA:
 
     def __exit__(
         self,
-        exc_type: Optional[type],
-        exc_val: Optional[BaseException],
-        exc_tb: Optional[Any],
+        exc_type: type | None,
+        exc_val: BaseException | None,
+        exc_tb: Any | None,
     ) -> bool:
         """Exit context: remove hooks, restore training state, and clear features."""
         self._remove_hooks()
@@ -265,9 +265,9 @@ class CKA:
     def compare(
         self,
         dataloader: DataLoader,
-        dataloader2: Optional[DataLoader] = None,
+        dataloader2: DataLoader | None = None,
         progress: bool = True,
-        callback: Optional[Callable[[int, int, torch.Tensor], None]] = None,
+        callback: Callable[[int, int, torch.Tensor], None] | None = None,
     ) -> torch.Tensor:
         """Compute CKA similarity matrix between model layers.
 
@@ -562,7 +562,7 @@ class CKA:
     def __call__(
         self,
         dataloader: DataLoader,
-        dataloader2: Optional[DataLoader] = None,
+        dataloader2: DataLoader | None = None,
         **kwargs: Any,
     ) -> torch.Tensor:
         """Compute CKA with automatic hook management.

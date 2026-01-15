@@ -1,6 +1,6 @@
 """Utility functions for CKA computation."""
 
-from typing import Dict, Iterator, Optional, Tuple
+from typing import Dict, Iterator, Tuple
 
 import torch
 import torch.nn as nn
@@ -24,7 +24,7 @@ def validate_batch_size(n: int) -> None:
 
 def get_device(
     model: nn.Module,
-    fallback: Optional[torch.device] = None,
+    fallback: torch.device | None = None,
 ) -> torch.device:
     """Get device from model parameters.
 
@@ -84,7 +84,7 @@ class FeatureCache:
             tensor = tensor.detach()
         self._features[name] = tensor
 
-    def get(self, name: str) -> Optional[torch.Tensor]:
+    def get(self, name: str) -> torch.Tensor | None:
         """Get a stored feature tensor.
 
         Args:

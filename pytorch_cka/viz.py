@@ -4,7 +4,7 @@ This module provides publication-quality visualization functions that
 always return (Figure, Axes) tuples for further customization.
 """
 
-from typing import List, Optional, Tuple
+from typing import List, Tuple
 
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
@@ -16,25 +16,25 @@ from matplotlib.figure import Figure
 
 def plot_cka_heatmap(
     cka_matrix: torch.Tensor | np.ndarray,
-    layers1: Optional[List[str]] = None,
-    layers2: Optional[List[str]] = None,
+    layers1: List[str] | None = None,
+    layers2: List[str] | None = None,
     model1_name: str = "Model 1",
     model2_name: str = "Model 2",
-    title: Optional[str] = None,
+    title: str | None = None,
     cmap: str = "magma",
-    vmin: Optional[float] = None,
-    vmax: Optional[float] = None,
+    vmin: float | None = None,
+    vmax: float | None = None,
     annot: bool = False,
     annot_fmt: str = ".2f",
-    figsize: Optional[Tuple[float, float]] = None,
-    ax: Optional[Axes] = None,
+    figsize: Tuple[float, float] | None = None,
+    ax: Axes | None = None,
     colorbar: bool = True,
     mask_upper: bool = False,
     tick_fontsize: int = 8,
     label_fontsize: int = 12,
     title_fontsize: int = 14,
     annot_fontsize: int = 6,
-    layer_name_depth: Optional[int] = None,
+    layer_name_depth: int | None = None,
     show: bool = False,
 ) -> Tuple[Figure, Axes]:
     """Plot CKA similarity matrix as a heatmap.
@@ -120,7 +120,7 @@ def plot_cka_heatmap(
     ax.set_ylabel(f"{model1_name} Layers", fontsize=label_fontsize)
 
     # Helper function to shorten layer names
-    def shorten_name(name: str, depth: Optional[int]) -> str:
+    def shorten_name(name: str, depth: int | None) -> str:
         if depth is None:
             return name
         parts = name.split(".")
@@ -160,16 +160,16 @@ def plot_cka_heatmap(
 
 def plot_cka_trend(
     cka_values: torch.Tensor | List[torch.Tensor] | np.ndarray | List[np.ndarray],
-    labels: Optional[List[str]] = None,
-    x_values: Optional[List[int | float]] = None,
+    labels: List[str] | None = None,
+    x_values: List[int | float] | None = None,
     xlabel: str = "Layer",
     ylabel: str = "CKA Similarity",
-    title: Optional[str] = None,
+    title: str | None = None,
     figsize: Tuple[float, float] = (10, 6),
-    ax: Optional[Axes] = None,
-    colors: Optional[List[str]] = None,
-    linestyles: Optional[List[str]] = None,
-    markers: Optional[List[str]] = None,
+    ax: Axes | None = None,
+    colors: List[str] | None = None,
+    linestyles: List[str] | None = None,
+    markers: List[str] | None = None,
     legend: bool = True,
     grid: bool = True,
     show: bool = False,
@@ -262,9 +262,9 @@ def plot_cka_trend(
 def plot_cka_comparison(
     matrices: List[torch.Tensor | np.ndarray],
     titles: List[str],
-    layers: Optional[List[str]] = None,
+    layers: List[str] | None = None,
     ncols: int = 2,
-    figsize: Optional[Tuple[float, float]] = None,
+    figsize: Tuple[float, float] | None = None,
     share_colorbar: bool = True,
     cmap: str = "magma",
     show: bool = False,
