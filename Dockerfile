@@ -41,4 +41,4 @@ COPY --from=builder /opt/venv /opt/venv
 RUN useradd --create-home --shell /bin/bash cka
 USER cka
 
-CMD ["python", "-c", "from pytorch_cka import CKA; print('pytorch-cka is ready! Import with: from pytorch_cka import CKA')"]
+CMD ["python", "-c", "from cka import CKA; print('pytorch-cka is ready! Import with: from cka import CKA')"]
