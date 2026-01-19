@@ -77,5 +77,4 @@ Dockerfile
 
 # CI/CD
 .github/
-.pre-commit-config.yaml
 .python-version
