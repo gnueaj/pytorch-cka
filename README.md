@@ -2,16 +2,32 @@
 
 # Centered Kernel Alignment (CKA)
 
-**Fast, Memory-efficient, and Stable CKA Library for PyTorch**
+[![PyPI](https://img.shields.io/pypi/v/pytorch-cka.svg)](https://pypi.org/project/pytorch-cka/)
+[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/pytorch-cka/)
+[![CI](https://github.com/ryusudol/Centered-Kernel-Alignment/workflows/CI/badge.svg)](https://github.com/ryusudol/Centered-Kernel-Alignment/actions)
+
+**Lightning-fast, Memory-efficient, and Numerically Stable CKA for PyTorch**
 
 </div>
 
-## ✨ Key Features
 
-- **Memory-efficient** — minibatch CKA without full-dataset loading
-- **Safe & automatic** — context manager handles hooks and cleanup
-- **Publication-ready plots** — heatmaps, trends, and comparison grids
-- **Production-ready** — HuggingFace, DataParallel/DDP, auto layer selection
+<p align="center">
+    <img alt="A bar chart with benchmark results." src="docs/assets/bar-chart.png" width="100%" />
+</p>
+
+<p align="center">
+  <i>Computing CKA on two different ResNet-18 models.</i>
+</p>
+
+
+- ⚡️ **3000%** Faster than the [most popular CKA library](https://github.com/AntixK/PyTorch-Model-Compare)
+- 📦 Memory-efficient minibatch CKA computation
+- 🎨 Customizable visualizations: heatmaps and line charts
+- 🧠 Supports HuggingFace models, DataParallel, and DDP
+- 🐳 Installable via `pip` or `docker`
+- 🛠️ Modern `pyproject.toml` packaging
+- 🤝 Python 3.10–3.14 compatibility
+
 
 ## 📦 Installation
 
