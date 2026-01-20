@@ -172,10 +172,11 @@ fig, axes = plot_cka_comparison(
 
 3. Wang, Tinghua, Xiaolu Dai, and Yuze Liu. ["Learning with Hilbert-Schmidt Independence Criterion: A Review."](https://www.sciencedirect.com/science/article/pii/S0950705121008297) _Knowledge-Based Systems 2021._
 
-### Related Projects
+## Related Projects
 
 - [AntixK/PyTorch-Model-Compare](https://github.com/AntixK/PyTorch-Model-Compare)
 - [RistoAle97/centered-kernel-alignment](https://github.com/RistoAle97/centered-kernel-alignment)
+- [numpee/CKA.pytorch](https://github.com/numpee/CKA.pytorch)
 
 ## 📝 License
 
