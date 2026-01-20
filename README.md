@@ -1,12 +1,12 @@
 <div align="center">
 
-# pytorch-cka
+# Centered Kernel Alignment (CKA)
 
 [![PyPI](https://img.shields.io/pypi/v/pytorch-cka.svg)](https://pypi.org/project/pytorch-cka/)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/pytorch-cka/)
 [![CI](https://github.com/ryusudol/Centered-Kernel-Alignment/workflows/CI/badge.svg)](https://github.com/ryusudol/Centered-Kernel-Alignment/actions)
 
-**Fast, Memory-efficient CKA Library with Visualization for PyTorch**
+**The Fastest Python Library for CKA with Built-in Visualization**
 
 </div>
 
@@ -16,11 +16,11 @@
 </p>
 
 <p align="center">
-  <i>CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10</i>
+  <i><b>3000%</b> faster CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
 </p>
 
 
-- ⚡️ **3000%** Faster than the [most popular CKA library](https://github.com/AntixK/PyTorch-Model-Compare)
+- ⚡️ Much faster than the [most popular CKA library](https://github.com/AntixK/PyTorch-Model-Compare)
 - 📦 Memory-efficient minibatch CKA computation
 - 🎨 Customizable visualizations: heatmaps and line charts
 - 🧠 Supports HuggingFace models, DataParallel, and DDP
