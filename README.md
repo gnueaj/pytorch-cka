@@ -1,12 +1,12 @@
 <div align="center">
 
-# Centered Kernel Alignment (CKA)
+# pytorch-cka
 
 [![PyPI](https://img.shields.io/pypi/v/pytorch-cka.svg)](https://pypi.org/project/pytorch-cka/)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/pytorch-cka/)
 [![CI](https://github.com/ryusudol/Centered-Kernel-Alignment/workflows/CI/badge.svg)](https://github.com/ryusudol/Centered-Kernel-Alignment/actions)
 
-**Fast and Memory-efficient CKA Library for PyTorch**
+**Fast, Memory-efficient CKA Library with Visualization for PyTorch**
 
 </div>
 
