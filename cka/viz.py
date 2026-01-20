@@ -420,7 +420,7 @@ def plot_cka_comparison(
     if figsize is None:
         figsize = (5 * ncols, 4 * nrows)
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=figsize, constrained_layout=True)
+    fig, axes = plt.subplots(nrows, ncols, figsize=figsize, constrained_layout=share_colorbar)
     axes = np.atleast_2d(axes)
 
     # Find global min/max for shared colorbar
@@ -463,6 +463,8 @@ def plot_cka_comparison(
         sm = plt.cm.ScalarMappable(norm=norm, cmap=cmap)
         sm.set_array([])
         fig.colorbar(sm, ax=axes, fraction=0.02, pad=0.02, label="CKA Similarity")
+    else:
+        fig.tight_layout()
 
     if show:
         plt.show()
