@@ -12,7 +12,7 @@
 
 
 <p align="center">
-    <img alt="A bar chart with benchmark results." src="https://github.com/user-attachments/assets/9653d0fb-fc23-4eb7-a657-b94ba6d3e25e" width="100%" />
+    <img alt="A bar chart with benchmark results." src="https://github.com/user-attachments/assets/71a99d79-c69e-4deb-a9aa-20e514f4cc80" width="100%" />
 </p>
 
 <p align="center">
