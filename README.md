@@ -172,6 +172,15 @@ fig, axes = plot_cka_comparison(
 
 3. Wang, Tinghua, Xiaolu Dai, and Yuze Liu. ["Learning with Hilbert-Schmidt Independence Criterion: A Review."](https://www.sciencedirect.com/science/article/pii/S0950705121008297) _Knowledge-Based Systems 2021._
 
+4. Hwang, Doyeon, et al. ["Tracing Representation Progression: Analyzing and Enhancing Layer-Wise Similarity."](https://arxiv.org/pdf/2406.14479v3) _arXiv 2024._
+
+5. Davari, MohammadReza, et al. ["Reliability of CKA as a Similarity Measure in Deep Learning."](https://openreview.net/pdf?id=8HRvyxc606) _ICLR 2023._
+
+6. Deng, Yuqi, et al. ["Manifold Approximation leads to Robust Kernel Alignment."](https://arxiv.org/pdf/2510.22953) _arXiv 2025._
+
+7. Lee, Jeeyoon, et al. ["Path to Intelligence: Measuring Similarity between Human Brain and Large Language Model Beyond Language Task."](https://arxiv.org/pdf/2509.08831v1) _arXiv 2025._
+
+
 ## Related Projects
 
 - [AntixK/PyTorch-Model-Compare](https://github.com/AntixK/PyTorch-Model-Compare)
