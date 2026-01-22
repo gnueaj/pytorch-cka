@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-  <i><b>3000%</b> faster CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
+  <i><b>3500%</b> faster CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
 </p>
 
 
