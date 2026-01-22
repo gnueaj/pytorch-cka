@@ -2,6 +2,7 @@ import warnings
 from typing import Any, Callable, Dict, List, Sequence, Tuple
 
 import torch
+from torch.cpu import is_available
 import torch.nn as nn
 from torch.types import Device
 from torch.utils.data import DataLoader
@@ -87,19 +88,26 @@ class CKA:
             self.model2, model2_layers, "model2"
         )
 
-        self.device = torch.device(
-            device if device else "cuda" if torch.cuda.is_available() else "cpu"
-        )
-
-        self.model1 = self.model1.to(self.device)
-        self.model2 = self.model2.to(self.device)
-
         self._is_same_model = self.model1 is self.model2
 
         self._hook_handles: List[torch.utils.hooks.RemovableHandle] = []
 
         self._model1_training = self.model1.training
         self._model2_training = self.model2.training
+
+        if device:
+            self.device = torch.device(device)
+        else:
+            if torch.cuda.is_available():
+                device = "cuda"
+            elif torch.backends.mps.is_available():
+                device = "mps"
+            else:
+                device = "cpu"
+            self.device = torch.device(device)
+
+        self.model1 = self.model1.to(self.device)
+        self.model2 = self.model2.to(self.device)
 
         if self._is_same_model:
             self._shared_layer_to_module: dict[str, nn.Module] = {
