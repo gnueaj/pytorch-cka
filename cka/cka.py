@@ -2,7 +2,6 @@ import warnings
 from typing import Any, Callable, Dict, List, Sequence, Tuple
 
 import torch
-from torch.cpu import is_available
 import torch.nn as nn
 from torch.types import Device
 from torch.utils.data import DataLoader
