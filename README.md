@@ -26,9 +26,9 @@
 
 
 - ⚡️ Much faster than the [most popular CKA library](https://github.com/AntixK/PyTorch-Model-Compare)
-- 📦 Memory-efficient minibatch CKA computation
-- 🎨 Customizable visualizations: heatmaps and line charts
+- 📦 Efficient memory management with explicit deallocation
 - 🧠 Supports HuggingFace models, DataParallel, and DDP
+- 🎨 Customizable visualizations: heatmaps and line charts
 - 🐳 Installable via `pip` or `docker`
 - 🛠️ Modern `pyproject.toml` packaging
 - 🤝 Python 3.10–3.14 compatibility
