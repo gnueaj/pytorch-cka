@@ -298,7 +298,9 @@ class CKA:
 
                 if verbose:
                     current_cka = self._compute_cka_matrix(hsic_xy, hsic_xx, hsic_yy)
-                    print(f"Batch {batch_idx + 1}/{total_batches} - Mean CKA: {current_cka.mean().item():.4f}")
+                    print(
+                        f"Batch {batch_idx + 1}/{total_batches} - Mean CKA: {current_cka.mean().item():.4f}"
+                    )
 
         return self._compute_cka_matrix(hsic_xy, hsic_xx, hsic_yy)
 
