@@ -3,8 +3,7 @@
 # pytorch-cka
 
 [![PyPI](https://img.shields.io/pypi/v/pytorch-cka.svg)](https://pypi.org/project/pytorch-cka/)
-[![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/pytorch-cka/)
-[![CI](https://github.com/ryusudol/Centered-Kernel-Alignment/workflows/CI/badge.svg)](https://github.com/ryusudol/Centered-Kernel-Alignment/actions)
+[![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/pytorch-cka/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/pytorch-cka?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=RED&left_text=downloads)](https://pepy.tech/projects/pytorch-cka)
 
 **The Fastest, Memory-efficient Python Library for CKA with Built-in Visualization**
@@ -25,18 +24,15 @@
 </p>
 
 
-- ⚡️ Much faster than the [most popular CKA library](https://github.com/AntixK/PyTorch-Model-Compare)
+- ⚡️ Fastest among CKA libraries thanks to **vectorized ops** & **GPU acceleration**
 - 📦 Efficient memory management with explicit deallocation
 - 🧠 Supports HuggingFace models, DataParallel, and DDP
 - 🎨 Customizable visualizations: heatmaps and line charts
-- 🐳 Installable via `pip` or `docker`
-- 🛠️ Modern `pyproject.toml` packaging
-- 🤝 Python 3.10–3.14 compatibility
 
 
 ## 📦 Installation
 
-Requires Python >= 3.10.
+Requires `Python 3.10+`
 
 ```bash
 # Using pip
@@ -44,14 +40,6 @@ pip install pytorch-cka
 
 # Using uv
 uv add pytorch-cka
-
-# Using docker
-docker pull ghcr.io/ryusudol/pytorch-cka:latest
-
-# From source
-git clone https://github.com/ryusudol/Centered-Kernel-Alignment
-cd pytorch-cka
-uv sync  # or: pip install -e .
 ```
 
 ## 👟 Quick Start
@@ -147,51 +135,7 @@ fig, ax = plot_cka_trend(
     </tr>
 </table>
 
-<!-- **Side-by-Side Comparison**
-
-```python
-from cka import plot_cka_comparison
-
-fig, axes = plot_cka_comparison(
-    matrices=[matrix1, matrix2, matrix3],
-    titles=["Epoch 1", "Epoch 10", "Epoch 100"],
-    layers=layers,
-    share_colorbar=True,
-)
-```
-
-<table>
-    <tr>
-      <td><img src="examples/plots/comparison_grid.png" alt="CKA comparison grid" width="100%"/></td>
-    </tr>
-    <tr>
-      <td align="center">CKA comparison grid</td>
-    </tr>
-</table> -->
 
 ## 📚 References
 
-1. Kornblith, Simon, et al. ["Similarity of Neural Network Representations Revisited."](https://arxiv.org/abs/1905.00414) _ICML 2019._
-
-2. Nguyen, Thao, Maithra Raghu, and Simon Kornblith. ["Do Wide and Deep Networks Learn the Same Things?"](https://arxiv.org/abs/2010.15327) _arXiv 2020._ (Minibatch CKA)
-
-3. Wang, Tinghua, Xiaolu Dai, and Yuze Liu. ["Learning with Hilbert-Schmidt Independence Criterion: A Review."](https://www.sciencedirect.com/science/article/pii/S0950705121008297) _Knowledge-Based Systems 2021._
-
-4. Hwang, Doyeon, et al. ["Tracing Representation Progression: Analyzing and Enhancing Layer-Wise Similarity."](https://arxiv.org/pdf/2406.14479v3) _arXiv 2024._
-
-5. Davari, MohammadReza, et al. ["Reliability of CKA as a Similarity Measure in Deep Learning."](https://openreview.net/pdf?id=8HRvyxc606) _ICLR 2023._
-
-6. Deng, Yuqi, et al. ["Manifold Approximation leads to Robust Kernel Alignment."](https://arxiv.org/pdf/2510.22953) _arXiv 2025._
-
-7. Lee, Jeeyoon, et al. ["Path to Intelligence: Measuring Similarity between Human Brain and Large Language Model Beyond Language Task."](https://arxiv.org/pdf/2509.08831v1) _arXiv 2025._
-
-
-## Related Projects
-
-- [AntixK/PyTorch-Model-Compare](https://github.com/AntixK/PyTorch-Model-Compare)
-- [RistoAle97/centered-kernel-alignment](https://github.com/RistoAle97/centered-kernel-alignment)
-- [numpee/CKA.pytorch](https://github.com/numpee/CKA.pytorch)
-
-## 📝 License
-
-[MIT License](LICENSE)
+Kornblith, Simon, et al. ["Similarity of Neural Network Representations Revisited."](https://arxiv.org/abs/1905.00414) _ICML 2019._
