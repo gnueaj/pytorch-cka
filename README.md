@@ -6,10 +6,9 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/pytorch-cka/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/pytorch-cka?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=RED&left_text=downloads)](https://pepy.tech/projects/pytorch-cka)
 
-**The Fastest, Memory-efficient Python Library for CKA with Built-in Visualization**
+**The Fastest, Memory-efficient Python Library for computing layer-wise ML model similarity**
 
 </div>
-
 
 <p align="center">
     <picture align="center">
@@ -23,12 +22,10 @@
   <i><b>3500%</b> faster CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
 </p>
 
-
 - ⚡️ Fastest among CKA libraries thanks to **vectorized ops** & **GPU acceleration**
 - 📦 Efficient memory management with explicit deallocation
 - 🧠 Supports HuggingFace models, DataParallel, and DDP
 - 🎨 Customizable visualizations: heatmaps and line charts
-
 
 ## 📦 Installation
 
@@ -47,34 +44,18 @@ uv add pytorch-cka
 ### Basic Usage
 
 ```python
-from torch.utils.data import DataLoader
-from cka import CKA
+from cka import compute_cka
 
-pretrained_model = ...  # e.g. pretrained ResNet-18
-fine_tuned_model = ...  # e.g. fine-tuned ResNet-18
-
-layers = ["layer1", "layer2", "layer3", "fc"]
-
-dataloader = DataLoader(..., batch_size=128)
-
-cka = CKA(
-    model1=pretrained_model,
-    model2=fine_tuned_model,
-    model1_name="ResNet-18 (pretrained)",
-    model2_name="ResNet-18 (fine-tuned)",
-    model1_layers=layers,
-    model2_layers=layers,
-    device="cuda"
+cka_matrices = compute_cka(
+    model1,
+    model2,
+    [dataloader1, dataloader2, dataloader3],
+    layers=["layer1", "layer2", "layer3"],
+    device=device,
 )
 
-# Most convenient usage (auto context manager)
-cka_matrix = cka(dataloader)
-cka_result = cka.export(cka_matrix)
-
-# Or explicit control
-with cka:
-    cka_matrix = cka.compare(dataloader)
-    cka_result = cka.export(cka_matrix)
+for cka_matrix in cka_matrices:
+  print(cka_matrix)
 ```
 
 ### Visualization
@@ -92,7 +73,6 @@ fig, ax = plot_cka_heatmap(
     model2_name="ResNet-18 (random init)",
     annot=False,          # Show values in cells
     cmap="inferno",       # Colormap
-    mask_upper=False,     # Mask upper triangle (symmetric matrices)
 )
 ```
 
@@ -134,7 +114,6 @@ fig, ax = plot_cka_trend(
       <td align="center">Multiple Trends</td>
     </tr>
 </table>
-
 
 ## 📚 References
 
