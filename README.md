@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/pytorch-cka/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/pytorch-cka?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=RED&left_text=downloads)](https://pepy.tech/projects/pytorch-cka)
 
-**The Fastest, Memory-efficient Python Library for CKA with Built-in Visualization**
+**The Fastest, Memory-efficient Python Library for computing layer-wise ML model similarity**
 
 </div>
 
@@ -50,11 +50,12 @@ cka_matrices = compute_cka(
     model1,
     model2,
     [dataloader1, dataloader2, dataloader3],
-    layers=["layer1", "layer2", "layer3", "fc"],
+    layers=["layer1", "layer2", "layer3"],
     device=device,
 )
 
-# compute_cka returns one matrix per dataloader, in order
+for cka_matrix in cka_matrices:
+  print(cka_matrix)
 ```
 
 ### Visualization
