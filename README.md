@@ -12,9 +12,9 @@
 
 <p align="center">
     <picture align="center">
-        <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/e5f5c51b-4298-424c-81dd-02657af60247">
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/2e665d9d-5645-4726-996f-3a1817136eaf">
-        <img alt="A bar chart with benchmark results in dark mode" src="https://github.com/user-attachments/assets/2e665d9d-5645-4726-996f-3a1817136eaf" width="100%" />
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/5ee31fc2-0f6e-493e-911e-5bf75b7e1de7">
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/0aefaeb9-4dab-4db9-b7ab-69a7fcfb6cbf">
+        <img alt="A bar chart with benchmark results in dark mode" src="https://github.com/user-attachments/assets/0aefaeb9-4dab-4db9-b7ab-69a7fcfb6cbf" width="100%" />
     </picture>
 </p>
 
@@ -78,14 +78,12 @@ fig, ax = plot_cka_heatmap(
 
 <table>
     <tr>
-      <td><img src="https://github.com/user-attachments/assets/f74a322d-1a19-4c4f-b1a2-07f238651512" alt="Self-comparison heatmap" width="100%"/></td>
-      <td><img src="https://github.com/user-attachments/assets/2121976c-c230-40b0-92d5-c48b5bf876c9" alt="Cross-model comparison heatmap" width="100%"/></td>
-      <!-- <td><img src="plots/heatmap_masked.png" alt="Masked upper triangle heatmap" width="100%"/></td> -->
+      <td><img src="https://github.com/user-attachments/assets/48bfd811-629e-483a-bc63-2a493872289c" alt="Self-comparison heatmap" width="100%"/></td>
+      <td><img src="https://github.com/user-attachments/assets/d0397b29-b748-4356-b151-d6ce47a31c0e" alt="Cross-model comparison heatmap" width="100%"/></td>
     </tr>
     <tr>
       <td align="center">Self-comparison</td>
       <td align="center">Cross-model</td>
-      <!-- <td align="center">Masked Upper</td> -->
     </tr>
 </table>
 
