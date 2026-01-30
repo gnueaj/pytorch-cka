@@ -12,9 +12,9 @@
 
 <p align="center">
     <picture align="center">
-        <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/5ee31fc2-0f6e-493e-911e-5bf75b7e1de7">
-        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/0aefaeb9-4dab-4db9-b7ab-69a7fcfb6cbf">
-        <img alt="A bar chart with benchmark results in dark mode" src="https://github.com/user-attachments/assets/0aefaeb9-4dab-4db9-b7ab-69a7fcfb6cbf" width="100%" />
+        <source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/5d1335fe-bdde-4065-8c96-33c0671c9334">
+        <source media="(prefers-color-scheme: dark)" srcset="https://github.com/user-attachments/assets/ebe24044-902f-4ccb-8575-38042419e40e">
+        <img alt="A bar chart with benchmark results in light mode" src="https://github.com/user-attachments/assets/5d1335fe-bdde-4065-8c96-33c0671c9334" width="100%" />
     </picture>
 </p>
 
