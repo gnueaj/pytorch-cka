@@ -19,7 +19,7 @@
 </p>
 
 <p align="center">
-  <i><b>3500%</b> faster CKA computation across all layers of two distinct ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
+  <i><b>1580%</b> faster CKA computation across 18 representational layers of ResNet-18 models on CIFAR-10 using NVIDIA H100 GPUs</i>
 </p>
 
 - ⚡️ Fastest among CKA libraries thanks to **vectorized ops** & **GPU acceleration**
