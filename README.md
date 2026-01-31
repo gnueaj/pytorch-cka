@@ -6,7 +6,7 @@
 [![Python](https://img.shields.io/badge/python-3.10%2B-blue)](https://pypi.org/project/pytorch-cka/)
 [![PyPI Downloads](https://static.pepy.tech/personalized-badge/pytorch-cka?period=total&units=INTERNATIONAL_SYSTEM&left_color=GREY&right_color=RED&left_text=downloads)](https://pepy.tech/projects/pytorch-cka)
 
-**The Fastest, Memory-efficient Python Library for computing layer-wise ML model similarity**
+**The Fastest, Memory-efficient Python Library for computing layer-wise similarity between neural network models**
 
 </div>
 
@@ -76,10 +76,22 @@ fig, ax = plot_cka_heatmap(
 )
 ```
 
-<table>
+<table width="100%">
     <tr>
-      <td><img src="https://github.com/user-attachments/assets/48bfd811-629e-483a-bc63-2a493872289c" alt="Self-comparison heatmap" width="100%"/></td>
-      <td><img src="https://github.com/user-attachments/assets/d0397b29-b748-4356-b151-d6ce47a31c0e" alt="Cross-model comparison heatmap" width="100%"/></td>
+      <td width="63.5%" style="padding:0; vertical-align:top; line-height:0;">
+          <img
+              src="https://github.com/user-attachments/assets/48bfd811-629e-483a-bc63-2a493872289c"
+              alt="Self-comparison heatmap"
+              style="display:block; width:100%;"
+          />
+      </td>
+      <td width="36.5%" style="padding:0; vertical-align:top; line-height:0;">
+          <img
+              src="https://github.com/user-attachments/assets/38ad963a-e8ce-4dc1-ab62-73d4f072ceca"
+              alt="Cross-model comparison heatmap"
+              style="display:block; width:100%;"
+          />
+      </td>
     </tr>
     <tr>
       <td align="center">Self-comparison</td>
